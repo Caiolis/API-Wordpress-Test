@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+// Libraries
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-function App() {
+// Components
+import { GlobalStyle } from "./GlobalStyles";
+import { Container, SubContainer } from "./styled";
+import Post from "./components/Post/Post";
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const promisse = axios.get("https://example-website/wp-json/wp/v2/posts");
+    promisse.then((response) => {
+      setData([...response.data]);
+    });
+    promisse.catch((error) => console.log(error));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <GlobalStyle />
+      <Container>
+        <SubContainer>
+        {data.map((item) => (
+          <Post title={item.title.rendered} excerpt={item.excerpt.rendered} link={item.link}/>
+        ))}
+        </SubContainer>
+      </Container>
+    </>
   );
 }
-
-export default App;
